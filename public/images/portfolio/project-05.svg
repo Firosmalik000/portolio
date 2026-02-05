@@ -1,0 +1,8 @@
+<svg width="1000" height="700" viewBox="0 0 1000 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1000" height="700" fill="#f6f3ef" />
+  <rect x="50" y="50" width="900" height="600" fill="#ffffff" stroke="#121212" stroke-width="3" />
+  <rect x="90" y="90" width="820" height="260" fill="#e6e0d8" />
+  <text x="90" y="430" font-family="Georgia, serif" font-size="40" fill="#111111">Project Five</text>
+  <text x="90" y="480" font-family="Arial, sans-serif" font-size="18" fill="#6e6a63">Narrative-driven UI system</text>
+  <rect x="90" y="530" width="240" height="10" fill="#c4382d" />
+</svg>

@@ -1,0 +1,9 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="900" fill="#f4f1ec" />
+  <rect x="60" y="60" width="1280" height="780" fill="#ffffff" stroke="#121212" stroke-width="4" />
+  <rect x="110" y="120" width="1180" height="380" fill="#e7e1d8" />
+  <text x="110" y="580" font-family="Georgia, serif" font-size="54" fill="#111111">Meridian Studios</text>
+  <text x="110" y="640" font-family="Arial, sans-serif" font-size="22" fill="#6e6a63">Flagship editorial web experience</text>
+  <rect x="110" y="700" width="300" height="12" fill="#c4382d" />
+  <rect x="110" y="730" width="520" height="12" fill="#d4cec6" />
+</svg>

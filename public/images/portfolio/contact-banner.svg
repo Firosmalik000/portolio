@@ -1,0 +1,9 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="900" fill="#f5f2ee" />
+  <rect x="70" y="70" width="1260" height="760" fill="#ffffff" stroke="#121212" stroke-width="4" />
+  <rect x="120" y="140" width="1160" height="360" fill="#e7e1d8" />
+  <text x="120" y="600" font-family="Georgia, serif" font-size="56" fill="#111111">CONTACT &amp; COLLABORATE</text>
+  <text x="120" y="660" font-family="Arial, sans-serif" font-size="22" fill="#6e6a63">Let us craft the next cover story.</text>
+  <rect x="120" y="720" width="320" height="12" fill="#c4382d" />
+  <rect x="120" y="750" width="520" height="10" fill="#d4cec6" />
+</svg>
