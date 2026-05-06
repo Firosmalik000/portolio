@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\SeoController;
 use App\Models\BankSoal;
 use App\Models\Olympiad;
 use App\Models\PageContent;
@@ -54,6 +55,7 @@ class LandingContentController extends Controller
             'programs' => $content['programs'],
             'bankSoalItems' => $content['bankSoalItems'],
             'olympiadHighlights' => $content['olympiadHighlights'],
+            'seoSettings' => SeoController::getPublicSettings(),
         ]);
     }
 
@@ -65,6 +67,31 @@ class LandingContentController extends Controller
         return Inertia::render('Public/BankSoal', [
             'landingContent' => $this->withMediaUrls($content),
             'bankSoalItems' => $content['bankSoalItems'],
+        ]);
+    }
+
+    public function programs(): Response
+    {
+        $content = $this->loadLandingContent();
+        $content['programs'] = $this->getPrograms(true);
+
+        return Inertia::render('Public/Program', [
+            'landingContent' => $this->withMediaUrls($content),
+            'programs' => $content['programs'],
+        ]);
+    }
+
+    public function programDetail(int $program): Response
+    {
+        $content = $this->loadLandingContent();
+        $record = Program::query()
+            ->whereKey($program)
+            ->where('is_active', true)
+            ->first();
+
+        return Inertia::render('Public/Program/Detail', [
+            'landingContent' => $this->withMediaUrls($content),
+            'program' => $record ? $this->formatProgram($record) : null,
         ]);
     }
 
@@ -216,6 +243,19 @@ class LandingContentController extends Controller
             }
         }
 
+        $siteConfig = $content['siteConfig'] ?? null;
+        if (is_array($siteConfig)) {
+            if (array_key_exists('name', $siteConfig)) {
+                $siteConfig['name'] = $this->normalizeTextValue($siteConfig['name']);
+            }
+
+            if (array_key_exists('shortName', $siteConfig)) {
+                $siteConfig['shortName'] = $this->normalizeTextValue($siteConfig['shortName']);
+            }
+
+            $content['siteConfig'] = $siteConfig;
+        }
+
         return $content;
     }
 
@@ -348,6 +388,25 @@ class LandingContentController extends Controller
         ];
     }
 
+    private function normalizeTextValue(null|array|string $value): string
+    {
+        if (is_array($value)) {
+            $localized = $value['id'] ?? ($value['en'] ?? '');
+
+            if (is_scalar($localized)) {
+                return (string) $localized;
+            }
+
+            return '';
+        }
+
+        if (is_scalar($value) || $value === null) {
+            return (string) ($value ?? '');
+        }
+
+        return '';
+    }
+
     private function getBankSoalItems(bool $onlyActive = false): array
     {
         $query = BankSoal::query();
@@ -365,6 +424,7 @@ class LandingContentController extends Controller
                 'format' => $item->format,
                 'questions' => $item->questions,
                 'description' => $this->normalizeLocalized($item->description),
+                'links' => $item->links ?? [],
                 'tone' => $item->tone,
                 'is_active' => $item->is_active,
             ];
@@ -378,16 +438,24 @@ class LandingContentController extends Controller
             $query->where('is_active', true);
         }
 
-        return $query->latest()->get()->map(function (Program $program) {
-            return [
-                'id' => $program->id,
-                'name' => $program->name,
-                'level' => $program->level,
-                'description' => $program->description,
-                'subjects' => $program->subjects ?? [],
-                'is_active' => $program->is_active,
-            ];
-        })->values()->all();
+        return $query->latest()->get()
+            ->map(fn (Program $program) => $this->formatProgram($program))
+            ->values()
+            ->all();
+    }
+
+    private function formatProgram(Program $program): array
+    {
+        return [
+            'id' => $program->id,
+            'name' => $program->name,
+            'level' => $program->level,
+            'description' => $program->description,
+            'subjects' => $program->subjects ?? [],
+            'mode' => $program->mode,
+            'image_url' => $program->image_path ? Storage::url($program->image_path) : null,
+            'is_active' => $program->is_active,
+        ];
     }
 
     private function getOlympiadHighlights(bool $onlyActive = false): array

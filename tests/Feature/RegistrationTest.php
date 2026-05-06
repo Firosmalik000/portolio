@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Program;
 use App\Models\Role;
 use App\Models\StudentRegistration;
 use App\Models\TeacherRegistration;
@@ -30,17 +31,47 @@ class RegistrationTest extends TestCase
         return $user;
     }
 
+    public function test_public_registration_page_displays_active_programs(): void
+    {
+        Program::create([
+            'name' => 'Reguler',
+            'level' => 'SMP',
+            'is_active' => true,
+        ]);
+
+        Program::create([
+            'name' => 'Nonaktif',
+            'level' => 'SD',
+            'is_active' => false,
+        ]);
+
+        $response = $this->get(route('register'));
+
+        $response->assertSuccessful();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Public/Register', false)
+            ->has('programs', 1)
+            ->where('programs.0.name', 'Reguler')
+        );
+    }
+
     // ── Student Registration ───────────────────────────────────────
 
     public function test_student_registration_stores_successfully(): void
     {
+        $program = Program::create([
+            'name' => 'Reguler',
+            'level' => 'SMP',
+            'is_active' => true,
+        ]);
+
         $payload = [
             'student_name' => 'Ahmad Fauzi',
             'address' => 'Jl. Merdeka No. 10',
             'school_name' => 'SMP Negeri 1',
             'level' => 'SMP',
             'subjects' => 'Matematika',
-            'program' => 'Reguler',
+            'program_id' => $program->id,
             'package' => '8 Sesi/Bulan',
             'parent_contact' => '081234567890',
             'preferred_mode' => 'Online',
@@ -55,6 +86,7 @@ class RegistrationTest extends TestCase
         $this->assertDatabaseHas('student_registrations', [
             'student_name' => 'Ahmad Fauzi',
             'level' => 'SMP',
+            'program_id' => $program->id,
             'program' => 'Reguler',
             'package' => '8 Sesi/Bulan',
         ]);
@@ -70,7 +102,7 @@ class RegistrationTest extends TestCase
             'school_name',
             'level',
             'subjects',
-            'program',
+            'program_id',
             'package',
             'parent_contact',
         ]);
@@ -78,13 +110,19 @@ class RegistrationTest extends TestCase
 
     public function test_student_registration_allows_nullable_fields(): void
     {
+        $program = Program::create([
+            'name' => 'Privat',
+            'level' => 'SD',
+            'is_active' => true,
+        ]);
+
         $payload = [
             'student_name' => 'Budi',
             'address' => 'Jl. Test',
             'school_name' => 'SD Test',
             'level' => 'SD',
             'subjects' => 'IPA',
-            'program' => 'Privat',
+            'program_id' => $program->id,
             'package' => '12 Sesi/Bulan',
             'parent_contact' => '0812345',
             'preferred_mode' => null,

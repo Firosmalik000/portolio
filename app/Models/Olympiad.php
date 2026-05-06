@@ -19,6 +19,7 @@ class Olympiad extends Model
         'category',
         'fee',
         'notes',
+        'image_path',
         'is_active',
     ];
 
@@ -27,6 +28,7 @@ class Olympiad extends Model
         return [
             'fee' => 'decimal:2',
             'is_active' => 'boolean',
+            'schedule' => 'date',
         ];
     }
 }
